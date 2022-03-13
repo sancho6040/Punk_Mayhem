@@ -8,8 +8,11 @@ function update() {
     game.physics.arcade.collide(granades, layer);
     game.physics.arcade.collide(player, skulls);
 
+    deltaTime = game.time.elapsed / 1000;
+
     //collision granadas
     game.physics.arcade.overlap(granades, skulls, collisionHandler, null, this);
+    
 
     //-------------------player movement-------------------------------
     player.body.velocity.x = 0;
@@ -50,11 +53,19 @@ function update() {
         } else {
             //animacion hacia la derecha
         }
+    }
 
+
+    if (exist) {
+        explosionTime += deltaTime;
+        if (explosionTime > 3) {
+            resetGranade(granade);  
+        }
     }
 }
 
 function throwGranade() {
+    exist = true;
     if (!facingLeft) {
         if (game.time.now > granadeTime) {
             granade = granades.getFirstExists(false);
@@ -88,6 +99,11 @@ function throwGranade() {
 
 function resetGranade(g) {
     g.kill();
+    exist = false;
+    explosionTime = 0;
+    var explosion = explosions.getFirstExists(false);
+    explosion.reset(granade.body.x, granade.body.y);
+    explosion.play('kboom', 16, false, true);
 }
 
 function collisionHandler(granade, enemy) {
@@ -95,7 +111,8 @@ function collisionHandler(granade, enemy) {
     granade.kill();
     enemy.kill();
     // box.kill();
-
+    exist = false;
+    explosionTime = 0;
     var explosion = explosions.getFirstExists(false);
     explosion.reset(granade.body.x, granade.body.y);
     explosion.play('kboom', 16, false, true);

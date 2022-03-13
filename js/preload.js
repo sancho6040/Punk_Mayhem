@@ -10,7 +10,7 @@ function preload() {
     game.load.image('granade', './assets/bomb/granade.png');
     game.load.spritesheet('boom', './assets/bomb/explode.png', 64, 64);
 
-    game.load.spritesheet('skull', './assets/characters/skull.png', 64, 64);
+    game.load.spritesheet('skull', './assets/characters/skull1.png', 64, 64);
 
     game.load.image('bg1', './assets/bg/bg.png');
     game.load.image('bg2', './assets/bg/buildings-bg.png');

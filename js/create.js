@@ -15,7 +15,10 @@ var granadeButton;
 var granades;
 var granade;
 var granadeTime = 0;
+var exist = false;
 var explosions;
+var deltaTime = 0;
+var explosionTime = 0;
 
 var map;
 var layer;
@@ -57,6 +60,8 @@ function create() {
     granades.enableBody = true;
     granades.physicsBodyType = Phaser.Physics.ARCADE;
     granades.createMultiple(20, 'granade');
+    granades.setAll('anchor.x', 0.5);
+    granades.setAll('anchor.y', 0.5);
     granades.setAll('outOfBoundsKill', true);
     granades.setAll('checkWorldBounds', true);
 
@@ -70,6 +75,14 @@ function create() {
     //   g.events.onOutOfBounds.add(resetGranade, this);
 
     // }
+
+    //-------------------------skulls-------------------------------------
+    skulls = game.add.group();
+    skulls.enableBody = true;
+    skulls.physicsBodyType = Phaser.Physics.ARCADE;
+
+    createEnemies(360, 2200);
+    createEnemies(200, 2300);
 
     //------------------------player---------------------------------------
     player = game.add.sprite(60, 2430, 'player');
@@ -90,13 +103,6 @@ function create() {
     player.animations.add('prejump_left', [33], 1, true);
 
 
-
-    //-------------------------skulls-------------------------------------
-    skulls = game.add.group();
-    skulls.enableBody = true;
-    skulls.physicsBodyType = Phaser.Physics.ARCADE;
-
-    createEnemies();
 
     //-----------------------kbooms-----------------------------------
     explosions = game.add.group();
@@ -119,18 +125,20 @@ function setupSkull(skull){
     skull.animations.add('kboom');
 }
 
-function createEnemies() {
+function createEnemies(x, y) {
 
-    var skull = skulls.create(300, 2200, 'skull');
+    var skull = skulls.create(x, y, 'skull');
     game.physics.arcade.enable(skull);
-    skull.anchor.setTo(0.5, 0);
+    skull.anchor.setTo(1, 1);
     skull.body.collideWorldBounds = true;
     skull.body.immovable = true;
     skull.body.gravity.y = 500;
+    // skull.body.setSize(64, 64, 0, 0);
 
     // skull = game.add.sprite(300, 2200, 'skull')
     // player.anchor.setTo(0.5, 0.5);
 
+    
 
     skull.animations.add('idle', [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40], 11, true);
     skull.animations.add('walk', [45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57], 13, true);
