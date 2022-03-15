@@ -6,5 +6,5 @@ var game = new Phaser.Game(640, 720, Phaser.AUTO, '', {
 });
 
 function render(){
-  game.debug.body(skulls);
+  // game.debug.body(skull);
 }

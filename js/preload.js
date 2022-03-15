@@ -8,6 +8,7 @@ function preload() {
 
     game.load.spritesheet('player', './assets/characters/ChikBoy_x32.png', 40, 64);
     game.load.image('granade', './assets/bomb/granade.png');
+    game.load.image('head', './assets/characters/head.png');
     game.load.spritesheet('boom', './assets/bomb/explode.png', 64, 64);
 
     game.load.spritesheet('skull', './assets/characters/skull1.png', 64, 64);

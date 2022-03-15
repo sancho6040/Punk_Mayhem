@@ -1,27 +1,39 @@
 
+//player variables
 var player;
-var platforms;
-var cursors;
+var alive;
+var lives;
 var facingLeft = false;
+var hitState = false;
 
+//UI variables
+var score = 0;
+var scoreString = '';
+var scoreText;
+var stateText;
+
+//backgounds
 var bg1;
 var bg2;
 var bg3;
 
-
+//enemies variables
 var skulls;
 
+//granades variables
 var granadeButton;
 var granades;
 var granade;
 var granadeTime = 0;
 var exist = false;
 var explosions;
-var deltaTime = 0;
 var explosionTime = 0;
 
+//efuntionañ variables
+var deltaTime = 0;
 var map;
 var layer;
+var cursors;
 var W;
 var A;
 var D;
@@ -36,13 +48,6 @@ function create() {
     bg.fixedToCamera = true;
     bg2.fixedToCamera = true;
 
-    // platforms = game.add.physicsGroup();
-
-    // platforms.create(500, 150, 'platform');
-    // platforms.create(-200, 300, 'platform');
-    // platforms.create(400, 450, 'platform');
-
-    // platforms.setAll('body.immovable', true);
 
     //-------------------tiledmap-------------------------
     map = game.add.tilemap('map', 32, 32);
@@ -53,7 +58,7 @@ function create() {
 
     //map.setCollisionByExclusion([13, 14, 15, 16, 46, 47, 48, 49, 50, 151]);
     map.setCollisionBetween(0, 4);
-    // map.createFromTiles(0, -1, "coin");
+    // map.createFromTiles(105, -1, 'skull');
 
     //------------------------------granades---------------------------
     granades = game.add.group();
@@ -66,32 +71,28 @@ function create() {
     granades.setAll('checkWorldBounds', true);
 
 
-    // for (let i = 0; i < 20; i++) {
-    //   var g = granades.create(0, 0, 'granade');
-    //   g.name = 'granade' + i;
-    //   g.exists = false;
-    //   g.visible = false;
-    //   g.checkWorldBounds = true;
-    //   g.events.onOutOfBounds.add(resetGranade, this);
-
-    // }
-
     //-------------------------skulls-------------------------------------
     skulls = game.add.group();
     skulls.enableBody = true;
     skulls.physicsBodyType = Phaser.Physics.ARCADE;
 
-    createEnemies(360, 2200);
-    createEnemies(200, 2300);
+    createEnemies(370, 2200);//esqueleto 1
+    createEnemies(320, 1888);//esqueleto 2
+    createEnemies(325, 1568);//esqueleto 3
+    createEnemies(424, 1376);//esqueleto 4
+    createEnemies(200, 1152);//esqueleto 5
+    createEnemies(255, 608);//esqueleto 6
+    createEnemies(420, 160);//esqueleto 7
+    createEnemies(242, 96);//esqueleto 8
 
     //------------------------player---------------------------------------
     player = game.add.sprite(60, 2430, 'player');
     game.camera.follow(player);
-
     game.physics.arcade.enable(player);
-
     player.body.collideWorldBounds = true;
     player.body.gravity.y = 500;
+
+    alive = true;
 
     // player.body.setSize(x,y,offsetX,offsetY);
     // -------------------animation add-------------------
@@ -99,8 +100,13 @@ function create() {
     player.animations.add('idle_rigth', [26, 27, 28, 29, 30, 31], 6, true);
     player.animations.add('run_left', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 10, true);
     player.animations.add('run_rigth', [10, 11, 12, 13, 14, 15, 16, 17, 18, 19], 10, true);
-    player.animations.add('prejump_rigth', [32], 1, true);
-    player.animations.add('prejump_left', [33], 1, true);
+    player.animations.add('jump_left', [2], 1, true);
+    player.animations.add('jump_rigth', [17], 1, true);
+    player.animations.add('prejump_rigth', [34], 1, true);
+    player.animations.add('prejump_left', [35], 1, true);
+    player.animations.add('dead', [36], 1, true);
+    player.animations.add('hit_rigth', [37], 1, true);
+    player.animations.add('hit_left', [38], 1, true);
 
 
 
@@ -108,6 +114,31 @@ function create() {
     explosions = game.add.group();
     explosions.createMultiple(20, 'boom');
     explosions.forEach(setupSkull, this);
+
+    //------------------------UI----------------------------------------
+    //----score----
+    scoreString = 'Score: ';
+    scoreText = game.add.text(10, 10, scoreString + score, { font: '34px Arial', fill: '#fff' });
+    scoreText.fixedToCamera = true;
+
+    //----lives-----
+    lives = game.add.group();
+    livesText = game.add.text(game.world.width - 100, 10, 'Lives: ',{font: '34px Arial', fill: '#fff'});
+    livesText.fixedToCamera = true;
+
+    for(var i = 0; i < 3; i++){
+        var head = lives.create(game.world.width - 100 + (40 * i), 65, 'head');
+        head.anchor.setTo(0.5, 0.5);
+        head.alpha = 0.7;
+        head.fixedToCamera = true;
+    }
+
+    //----stateText----
+    stateText = game.add.text(game.world.width/2, game.world.width/2, '', { font: '84px Arial', fill: '#fff' });
+    stateText.anchor.setTo(0.5, 0.5);
+    stateText.visible = false;
+    stateText.fixedToCamera = true;
+
 
 
     //------------------------input------------------------------------
