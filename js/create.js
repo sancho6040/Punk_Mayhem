@@ -5,10 +5,10 @@ var alive;
 var lives;
 var facingLeft = false;
 var hitState = false;
+var hitTime = 0;
 
 //UI variables
 var score = 0;
-var scoreString = '';
 var scoreText;
 var stateText;
 
@@ -38,6 +38,12 @@ var W;
 var A;
 var D;
 
+var song;
+var exp_sound;
+var hit;
+var jump;
+var lose;
+
 
 function create() {
 
@@ -48,6 +54,17 @@ function create() {
     bg.fixedToCamera = true;
     bg2.fixedToCamera = true;
 
+    //--------------------audio-----------------------------------------
+    song = game.add.audio('song');
+    song.play();
+    song.volume = 0.4;
+    song.loop = true;
+
+    exp_sound = game.add.audio('explosion');
+    hit = game.add.audio('hit');
+    jump = game.add.audio('jump');
+    lose = game.add.audio('lose');
+    jump.volume = 2;
 
     //-------------------tiledmap-------------------------
     map = game.add.tilemap('map', 32, 32);
@@ -117,8 +134,8 @@ function create() {
 
     //------------------------UI----------------------------------------
     //----score----
-    scoreString = 'Score: ';
-    scoreText = game.add.text(10, 10, scoreString + score, { font: '34px Arial', fill: '#fff' });
+    // scoreString = 'Score: ';
+    scoreText = game.add.text(10, 10, 'Score: ' + score, { font: '34px Arial', fill: '#fff' });
     scoreText.fixedToCamera = true;
 
     //----lives-----

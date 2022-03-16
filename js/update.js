@@ -20,22 +20,22 @@ function update() {
     //-------------------player movement-------------------------------
 
     if (alive) {
-        if (cursors.left.isDown || A.isDown) {
-            //hacia la izquiera
-            player.body.velocity.x = -250;
-            player.animations.play('run_left');
-            hitState = false
-            facingLeft = true;
-        }
-        else if (cursors.right.isDown || D.isDown) {
-            //hacia la derecha
-            player.body.velocity.x = 250;
-            player.animations.play('run_rigth');
-            hitState = false
-            facingLeft = false;
-        }
-        else {
-            if (!hitState) {
+        if (!hitState) {
+            if (cursors.left.isDown || A.isDown) {
+                //hacia la izquiera
+                player.body.velocity.x = -250;
+                player.animations.play('run_left');
+                // hitState = false
+                facingLeft = true;
+            }
+            else if (cursors.right.isDown || D.isDown) {
+                //hacia la derecha
+                player.body.velocity.x = 250;
+                player.animations.play('run_rigth');
+                // hitState = false
+                facingLeft = false;
+            }
+            else {
                 player.body.velocity.x = 0;
 
                 if (facingLeft) {
@@ -43,12 +43,23 @@ function update() {
                 } else {
                     player.animations.play('idle_rigth');
                 }
+
             }
         }
 
+        //---------------------salto-----------------------------------------
         if ((cursors.up.isDown || W.isDown) && (player.body.onFloor() || player.body.touching.down)) {
-            //salto
             player.body.velocity.y = -400;
+            jump.play();
+        }
+
+        //-------------------hitState------------------------------------
+        if (hitState) {
+            hitTime += deltaTime;
+            if (hitTime > 1) {
+                hitState = false;
+                hitTime = 0;
+            }
         }
 
         //-------------------player shoot-----------------------------------
@@ -69,7 +80,7 @@ function update() {
                 game.physics.arcade.overlap(player, granades, damageGranade, null, this)
             }
         }
-    }else{
+    } else {
         //si el jugador muere se queda quieto
         player.body.velocity.x = 0;
     }
@@ -112,16 +123,19 @@ function throwGranade() {
 function resetGranade(g) {
     g.kill();
     exist = false;
+
+    exp_sound.play();
     explosionTime = 0;
     var explosion = explosions.getFirstExists(false);
     explosion.reset(granade.body.x, granade.body.y);
     explosion.play('kboom', 16, false, true);
+
 }
 
 function collisionHandler(granade, enemy) {
 
     score += 10;
-    scoreText.text = scoreString + score;
+    scoreText.text = 'Score: ' + score;
     console.log(scoreText);
 
     granade.kill();
@@ -136,8 +150,12 @@ function collisionHandler(granade, enemy) {
 function damageEnemy(player, enemie) {
     hitState = true;
 
+    hit.play();
+
     live = lives.getFirstAlive();
-    console.log("lives -1");
+    console.log("---------------", lives.countLiving(), "----------------");
+
+    console.log("hitTime: ", hitTime);
     if (live) {
         live.kill();
     }
@@ -155,8 +173,9 @@ function damageEnemy(player, enemie) {
     if (lives.countLiving() < 1) {
         player.animations.play('dead');
         alive = false;
+        lose.play();
 
-        stateText.text=" GAME OVER \n Click to restart";
+        stateText.text = " GAME OVER \n Click to restart";
         stateText.visible = true;
 
         // game.input.onTap.addOnce(restart, this);
