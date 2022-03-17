@@ -38,11 +38,14 @@ var W;
 var A;
 var D;
 
+var enemyDeath;
 var song;
 var exp_sound;
 var hit;
 var jump;
-var lose;
+var loseBool = false;
+var lose
+var end;
 
 
 function create() {
@@ -53,6 +56,7 @@ function create() {
     bg3 = game.add.tileSprite(0, 0, 640, 720, 'bg3');
     bg.fixedToCamera = true;
     bg2.fixedToCamera = true;
+    bg3.fixedToCamera = true;
 
     //--------------------audio-----------------------------------------
     song = game.add.audio('song');
@@ -64,6 +68,7 @@ function create() {
     hit = game.add.audio('hit');
     jump = game.add.audio('jump');
     lose = game.add.audio('lose');
+    enemyDeath = game.add.audio('death');
     jump.volume = 2;
 
     //-------------------tiledmap-------------------------
@@ -102,8 +107,15 @@ function create() {
     createEnemies(420, 160);//esqueleto 7
     createEnemies(242, 96);//esqueleto 8
 
+    //----------------------end gate-------------------------------------
+    end = game.add.sprite(85, 15, 'end');
+    end.animations.add('end')
+    end.animations.play('end', 4, true);
+    game.physics.arcade.enable(end);
+
     //------------------------player---------------------------------------
     player = game.add.sprite(60, 2430, 'player');
+    // player = game.add.sprite(55, 32, 'player');
     game.camera.follow(player);
     game.physics.arcade.enable(player);
     player.body.collideWorldBounds = true;
@@ -125,12 +137,11 @@ function create() {
     player.animations.add('hit_rigth', [37], 1, true);
     player.animations.add('hit_left', [38], 1, true);
 
-
-
     //-----------------------kbooms-----------------------------------
     explosions = game.add.group();
     explosions.createMultiple(20, 'boom');
     explosions.forEach(setupSkull, this);
+
 
     //------------------------UI----------------------------------------
     //----score----
@@ -190,7 +201,7 @@ function createEnemies(x, y) {
 
     skull.animations.add('idle', [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40], 11, true);
     skull.animations.add('walk', [45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57], 13, true);
-    skull.animations.add('die', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], 15, true);
+    skull.animations.add('die', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], 15, false);
     skull.animations.add('hit', [15, 16, 17, 18, 19, 20, 21, 22], 8, true);
 
     skull.animations.play('idle');

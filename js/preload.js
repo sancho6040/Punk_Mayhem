@@ -10,11 +10,13 @@ function preload() {
     game.load.audio('hit', './assets/sounds/hit.mp3');
     game.load.audio('jump', './assets/sounds/jump.mp3');
     game.load.audio('lose', './assets/sounds/lose.mp3');
+    game.load.audio('death', './assets/sounds/enemyDeath.mp3');
 
     game.load.spritesheet('player', './assets/characters/ChikBoy_x32.png', 40, 64);
     game.load.image('granade', './assets/bomb/granade.png');
     game.load.image('head', './assets/characters/head.png');
     game.load.spritesheet('boom', './assets/bomb/explode.png', 64, 64);
+    game.load.spritesheet('end', './assets/banner.png', 25, 63);
 
     game.load.spritesheet('skull', './assets/characters/skull1.png', 64, 64);
 

@@ -10,6 +10,7 @@ function update() {
     //collision entidades
     // game.physics.arcade.collide(player, skulls);
     game.physics.arcade.overlap(player, skulls, damageEnemy, null, this);
+    game.physics.arcade.overlap(player, end, endGame, null, this);
 
     deltaTime = game.time.elapsed / 1000;
 
@@ -136,10 +137,14 @@ function collisionHandler(granade, enemy) {
 
     score += 10;
     scoreText.text = 'Score: ' + score;
-    console.log(scoreText);
+
 
     granade.kill();
-    enemy.kill();
+
+    enemyDeath.play();
+    enemy.animations.play('die');
+    enemy.animations.currentAnim.onComplete.add(()=>{enemy.kill();});
+    
     exist = false;
     explosionTime = 0;
     var explosion = explosions.getFirstExists(false);
@@ -150,7 +155,7 @@ function collisionHandler(granade, enemy) {
 function damageEnemy(player, enemie) {
     hitState = true;
 
-    hit.play();
+    
 
     live = lives.getFirstAlive();
     console.log("---------------", lives.countLiving(), "----------------");
@@ -158,6 +163,7 @@ function damageEnemy(player, enemie) {
     console.log("hitTime: ", hitTime);
     if (live) {
         live.kill();
+        hit.play();
     }
 
     if (facingLeft) {
@@ -178,7 +184,7 @@ function damageEnemy(player, enemie) {
         stateText.text = " GAME OVER \n Click to restart";
         stateText.visible = true;
 
-        // game.input.onTap.addOnce(restart, this);
+        game.input.onTap.addOnce(restart, this);
     }
 
 
@@ -203,4 +209,18 @@ function damageGranade(player, granade) {
     explosion.reset(granade.body.x, granade.body.y);
     explosion.play('kboom', 16, false, true);
 
+}
+
+function endGame() {
+    player.animations.play('dead');
+    alive = false;
+
+    stateText.text = " ¡Level Complete! \n   Click to restart";
+    stateText.visible = true
+    game.input.onTap.addOnce(restart, this);;
+}
+
+
+function restart() {
+    window.location.replace("index.html");
 }
